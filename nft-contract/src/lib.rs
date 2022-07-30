@@ -7,25 +7,40 @@ use near_sdk::{
     env, near_bindgen, AccountId, Balance, CryptoHash, PanicOnDefault, Promise, PromiseOrValue,
 };
 
+use crate::internal::*;
 pub use crate::metadata::*;
 pub use crate::mint::*;
 pub use crate::nft_core::*;
 pub use crate::approval::*;
 pub use crate::royalty::*;
 
-mod approval; 
-mod enumeration; 
-mod metadata; 
-mod mint; 
-mod nft_core; 
-mod royalty; 
+mod internal;
+mod approval;
+mod enumeration;
+mod metadata;
+mod mint;
+mod nft_core;
+mod royalty;
 
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
 pub struct Contract {
-    /*
-        FILL THIS IN
-    */
+    //contract owner
+    pub owner_id: AccountId,
+
+    //keeps track of all the token IDs for a given account
+    pub tokens_per_owner: LookupMap<AccountId, UnorderedSet<TokenId>>,
+
+    pub tokens_count: u32,
+    //keeps track of the token struct for a given token ID
+    pub tokens_by_id: LookupMap<TokenId, Token>,
+
+
+    //keeps track of the token metadata for a given token ID
+    pub token_metadata_by_id: UnorderedMap<TokenId, TokenMetadata>,
+
+    //keeps track of the metadata for the contract
+    pub metadata: LazyOption<NFTContractMetadata>,
 }
 
 /// Helper structure for keys of the persistent collections.
@@ -50,10 +65,19 @@ impl Contract {
     */
     #[init]
     pub fn new_default_meta(owner_id: AccountId) -> Self {
-        /*
-            FILL THIS IN
-        */
-        todo!(); //remove once code is filled in.
+        //calls the other function "new: with some default metadata and the owner_id passed in
+           Self::new(
+               owner_id,
+               NFTContractMetadata {
+                   spec: "nft-nearcrash-test-1.0.412".to_string(),
+                   name: "NEARCRASHERs".to_string(),
+                   symbol: "NEARCRASHERs".to_string(),
+                   icon: serde::export::Some("https://nearcrash.io/favicon.0f1069a7.png".to_string()),
+                   base_uri: serde::export::Some("nearcrash.io".to_string()),
+                   reference: None,
+                   reference_hash: None,
+               },
+           )
     }
 
     /*
@@ -63,9 +87,28 @@ impl Contract {
     */
     #[init]
     pub fn new(owner_id: AccountId, metadata: NFTContractMetadata) -> Self {
-        /*
-            FILL THIS IN
-        */
-        todo!(); //remove once code is filled in.
+      //create a variable of type Self with all the fields initialized.
+         let this = Self {
+             //Storage keys are simply the prefixes used for the collections. This helps avoid data collision
+             tokens_per_owner: LookupMap::new(StorageKey::TokensPerOwner.try_to_vec().unwrap()),
+             tokens_by_id: LookupMap::new(StorageKey::TokensById.try_to_vec().unwrap()),
+             token_metadata_by_id: UnorderedMap::new(
+                 StorageKey::TokenMetadataById.try_to_vec().unwrap(),
+             ),
+             //set the owner_id field equal to the passed in owner_id.
+             owner_id,
+             tokens_count: 0,
+             metadata: LazyOption::new(
+                 StorageKey::NFTContractMetadata.try_to_vec().unwrap(),
+                 Some(&metadata),
+             ),
+         };
+
+         //return the Contract object
+         this
+    }
+
+    pub fn getContract(&mut self) -> u32 {
+        self.tokens_count
     }
 }
