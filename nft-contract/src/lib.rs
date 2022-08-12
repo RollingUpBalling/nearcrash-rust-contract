@@ -4,7 +4,7 @@ use near_sdk::collections::{LazyOption, LookupMap, UnorderedMap, UnorderedSet};
 use near_sdk::json_types::{Base64VecU8, U128};
 use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::{
-    env, near_bindgen, AccountId, Balance, CryptoHash, PanicOnDefault, Promise, PromiseOrValue,
+    env, near_bindgen, AccountId, Balance, CryptoHash, PanicOnDefault, Promise, PromiseOrValue
 };
 
 use crate::internal::*;
@@ -13,6 +13,7 @@ pub use crate::mint::*;
 pub use crate::nft_core::*;
 pub use crate::approval::*;
 pub use crate::royalty::*;
+pub use crate::events::*;
 
 mod internal;
 mod approval;
@@ -21,6 +22,12 @@ mod metadata;
 mod mint;
 mod nft_core;
 mod royalty;
+mod events;
+
+/// This spec can be treated like a version of the standard.
+pub const NFT_METADATA_SPEC: &str = "1.0.0";
+/// This is the name of the NFT standard we're using
+pub const NFT_STANDARD_NAME: &str = "nep171";
 
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
