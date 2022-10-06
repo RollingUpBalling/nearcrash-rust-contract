@@ -5,7 +5,7 @@ pub type TokenId = String;
 #[serde(crate = "near_sdk::serde")]
 pub struct Payout {
     pub payout: HashMap<AccountId, U128>,
-} 
+}
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Clone)]
 #[serde(crate = "near_sdk::serde")]
@@ -24,12 +24,7 @@ pub struct NFTContractMetadata {
 pub struct TokenMetadata {
         pub title: Option<String>, // ex. "Arch Nemesis: Mail Carrier" or "Parcel #5055"
         pub description: Option<String>, // free-form description
-        pub hat: Option<String>,
-        pub background: Option<String>,
-        pub flag: Option<String>,
-        pub pet: Option<String>,
-        pub body: Option<String>,
-        pub face: Option<String>,
+        pub extra: Option<String>,
         pub media: Option<String>, // URL to associated media, preferably to decentralized, content-addressed storage
 }
 

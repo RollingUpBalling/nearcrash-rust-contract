@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-use near_sdk::collections::{LazyOption, LookupMap, UnorderedMap, UnorderedSet};
+use near_sdk::collections::{LazyOption, LookupMap, Vector, UnorderedMap, UnorderedSet};
 use near_sdk::json_types::{Base64VecU8, U128};
 use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::{
@@ -37,12 +37,16 @@ pub struct Contract {
 
     //keeps track of all the token IDs for a given account
     pub tokens_per_owner: LookupMap<AccountId, UnorderedSet<TokenId>>,
-
+    pub white_list: Vec<AccountId>,
+    pub og_list: Vec<AccountId>,
     pub tokens_count: u32,
     //keeps track of the token struct for a given token ID
     pub tokens_by_id: LookupMap<TokenId, Token>,
 
-
+    pub white_list_sales: bool,
+    pub public_sales: bool,
+    pub team_list: Vec<AccountId>,
+    pub team_list_sales: bool,
     //keeps track of the token metadata for a given token ID
     pub token_metadata_by_id: UnorderedMap<TokenId, TokenMetadata>,
 
@@ -112,6 +116,12 @@ impl Contract {
                  StorageKey::NFTContractMetadata.try_to_vec().unwrap(),
                  Some(&metadata),
              ),
+             og_list: Vec::new(),
+             white_list: Vec::new(),
+             white_list_sales: false,
+             public_sales: false,
+             team_list: Vec::new(),
+             team_list_sales: false,
          };
 
          //return the Contract object
@@ -119,6 +129,6 @@ impl Contract {
     }
 
     pub fn getContract(&mut self) -> u32 {
-        self.tokens_count
+        return self.tokens_count
     }
 }

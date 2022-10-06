@@ -57,6 +57,13 @@ pub struct NftMintLog {
     pub memo: Option<String>,
 }
 
+pub struct Log {
+    pub subj1: bool,
+    pub subj2: bool,
+    pub subj3: bool,
+    pub subj4: bool
+}
+
 /// An event log to capture token transfer
 ///
 /// Arguments
